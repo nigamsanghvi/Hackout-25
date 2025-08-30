@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Report an Incident</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_incident_type" class="form-label">Incident Type</label>
+                                    <select name="incident_type" class="form-select" id="id_incident_type" required>
+                                        <option value="">Select incident type</option>
+                                        <option value="cutting">Illegal Cutting</option>
+                                        <option value="dumping">Pollution/Dumping</option>
+                                        <option value="reclamation">Land Reclamation</option>
+                                        <option value="other">Other Threat</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="id_location_description" class="form-label">Location Description</label>
+                                    <input type="text" name="location_description" class="form-control" id="id_location_description" placeholder="e.g., Near the fishing village">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            <textarea name="description" class="form-control" id="id_description" rows="4" placeholder="Please describe what you observed..." required></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="id_photo" class="form-label">Photo Evidence</label>
+                            <input type="file" name="photo" class="form-control" id="id_photo" accept="image/*" required>
+                            <div class="form-text">Upload a clear photo of the incident. This will help with validation.</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Select Location on Map</label>
+                            <div id="report-form-map" style="height: 300px; border-radius: 8px;"></div>
+                            <div class="form-text">Click on the map to mark the incident location.</div>
+                            
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_latitude" class="form-label">Latitude</label>
+                                        <input type="number" step="any" name="latitude" class="form-control" id="id_latitude" readonly required>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="id_longitude" class="form-label">Longitude</label>
+                                        <input type="number" step="any" name="longitude" class="form-control" id="id_longitude" readonly required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary w-100">Submit Report</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Initialize map for report form
+    document.addEventListener('DOMContentLoaded', function() {
+        const reportMap = L.map('report-form-map').setView([-2.5, 118.0], 5);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(reportMap);
+        
+        let marker = null;
+        
+        reportMap.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            
+            // Update form fields
+            document.getElementById('id_latitude').value = lat;
+            document.getElementById('id_longitude').value = lng;
+            
+            // Update marker position
+            if (marker) {
+                reportMap.removeLayer(marker);
+            }
+            
+            marker = L.marker([lat, lng]).addTo(reportMap)
+                .bindPopup('Incident location<br>Lat: ' + lat.toFixed(4) + '<br>Lng: ' + lng.toFixed(4))
+                .openPopup();
+        });
+        
+        // Add locate control
+        L.control.locate({
+            position: 'topright',
+            strings: {
+                title: "Show my location"
+            }
+        }).addTo(reportMap);
+    });
+</script>
+{% endblock %}

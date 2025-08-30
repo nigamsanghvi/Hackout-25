@@ -1,0 +1,374 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+    .stats-container {
+        padding: 20px;
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+    
+    .stats-header {
+        background: linear-gradient(135deg, #2c7a5a 0%, #8cc1aa 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+    
+    .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        border-left: 4px solid #2c7a5a;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+    
+    .stat-card h3 {
+        color: #2c7a5a;
+        margin: 0 0 15px 0;
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .stat-number {
+        font-size: 2.8rem;
+        font-weight: 700;
+        color: #2c7a5a;
+        margin: 10px 0;
+        line-height: 1;
+    }
+    
+    .stat-description {
+        color: #666;
+        margin: 0;
+        font-size: 14px;
+    }
+    
+    .chart-container {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        margin-bottom: 25px;
+    }
+    
+    .chart-title {
+        color: #2c7a5a;
+        margin: 0 0 20px 0;
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+    
+    .data-table th {
+        background: linear-gradient(135deg, #2c7a5a 0%, #8cc1aa 100%);
+        color: white;
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+    }
+    
+    .data-table td {
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    
+    .data-table tr:hover {
+        background: #f8f9fa;
+    }
+    
+    .badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+    
+    .badge-success { background: #d4edda; color: #155724; }
+    .badge-warning { background: #fff3cd; color: #856404; }
+    .badge-info { background: #d1ecf1; color: #0c5460; }
+    
+    .progress {
+        height: 8px;
+        background: #e9ecef;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 10px 0;
+    }
+    
+    .progress-bar {
+        height: 100%;
+        background: linear-gradient(135deg, #2c7a5a 0%, #8cc1aa 100%);
+        border-radius: 4px;
+    }
+    
+    .stats-actions {
+        display: flex;
+        gap: 15px;
+        margin: 30px 0;
+        flex-wrap: wrap;
+    }
+    
+    .btn-stat {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #2c7a5a;
+        color: white;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+    }
+    
+    .btn-stat:hover {
+        background: #236248;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(44, 122, 90, 0.3);
+        color: white;
+        text-decoration: none;
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .stats-actions {
+            flex-direction: column;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="stats-container">
+    <!-- Header -->
+    <div class="stats-header">
+        <h1 style="margin: 0; font-size: 2.2rem;">
+            <i class="bi bi-graph-up"></i> Mangrove Watch Statistics Dashboard
+        </h1>
+        <p style="margin: 10px 0 0 0; opacity: 0.9;">Comprehensive overview of platform activity and conservation impact</p>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="stats-actions">
+        <a href="{% url 'admin:reports_incidentreport_changelist' %}" class="btn-stat">
+            <i class="bi bi-list-check"></i> Manage Reports
+        </a>
+        <a href="{% url 'admin:users_customuser_changelist' %}" class="btn-stat">
+            <i class="bi bi-people"></i> Manage Users
+        </a>
+        <a href="{% url 'admin:index' %}" class="btn-stat">
+            <i class="bi bi-speedometer2"></i> Back to Admin Home
+        </a>
+        <a href="{% url 'admin:reports_incidentreport_add' %}" class="btn-stat">
+            <i class="bi bi-plus-circle"></i> Add New Report
+        </a>
+    </div>
+
+    <!-- Statistics Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3><i class="bi bi-file-text"></i> Total Reports</h3>
+            <div class="stat-number">{{ total_reports|default:0 }}</div>
+            <p class="stat-description">All incident reports submitted by the community</p>
+        </div>
+
+        <div class="stat-card">
+            <h3><i class="bi bi-people"></i> Total Users</h3>
+            <div class="stat-number">{{ total_users|default:0 }}</div>
+            <p class="stat-description">Registered community members and contributors</p>
+        </div>
+
+        <div class="stat-card">
+            <h3><i class="bi bi-check-circle"></i> Validated Reports</h3>
+            <div class="stat-number">{{ validated_reports|default:0 }}</div>
+            <p class="stat-description">Reports confirmed by authorities and NGOs</p>
+            <div class="progress">
+                <div class="progress-bar" style="width: {% widthratio validated_reports total_reports 100 %}%"></div>
+            </div>
+            <small>{{ validated_percentage|floatformat:1 }}% validation rate</small>
+        </div>
+
+        <div class="stat-card">
+            <h3><i class="bi bi-award"></i> Total Points</h3>
+            <div class="stat-number">{{ total_points|default:0 }}</div>
+            <p class="stat-description">Total points earned by all users through conservation efforts</p>
+        </div>
+
+        <div class="stat-card">
+            <h3><i class="bi bi-geo-alt"></i> Active Regions</h3>
+            <div class="stat-number">{{ active_regions|default:5 }}</div>
+            <p class="stat-description">Geographic areas with active monitoring and reporting</p>
+        </div>
+
+        <div class="stat-card">
+            <h3><i class="bi bi-clock-history"></i> Avg Response Time</h3>
+            <div class="stat-number">{{ avg_response_time|default:24 }}</div>
+            <p class="stat-description">Average hours until report validation</p>
+        </div>
+    </div>
+
+    <!-- Recent Reports Table -->
+    <div class="chart-container">
+        <h3 class="chart-title"><i class="bi bi-clock"></i> Recent Reports (Last 10)</h3>
+        {% if recent_reports %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Type</th>
+                    <th>Reporter</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                    <th>AI Confidence</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for report in recent_reports %}
+                <tr>
+                    <td><strong>#{{ report.id|slice:":8" }}</strong></td>
+                    <td>{{ report.get_incident_type_display }}</td>
+                    <td>{{ report.reporter.username }}</td>
+                    <td>
+                        <span class="badge badge-{% if report.status == 'validated' %}success{% elif report.status == 'reported' %}warning{% else %}info{% endif %}">
+                            {{ report.get_status_display }}
+                        </span>
+                    </td>
+                    <td>{{ report.created_at|date:"M d, Y" }}</td>
+                    <td>
+                        <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;">
+                            <div class="progress-bar" style="width: {% widthratio report.ai_confidence 1 100 %}%"></div>
+                        </div>
+                        {{ report.ai_confidence|floatformat:2 }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>No reports available.</p>
+        {% endif %}
+    </div>
+
+    <!-- User Statistics -->
+    <div class="chart-container">
+        <h3 class="chart-title"><i class="bi bi-bar-chart"></i> User Activity Overview</h3>
+        {% if user_stats %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User Type</th>
+                    <th>Count</th>
+                    <th>Active Users</th>
+                    <th>Total Points</th>
+                    <th>Avg Points</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in user_stats %}
+                <tr>
+                    <td><strong>{{ stat.user_type }}</strong></td>
+                    <td>{{ stat.count }}</td>
+                    <td>{{ stat.active_count }}</td>
+                    <td>{{ stat.total_points }}</td>
+                    <td>{{ stat.avg_points|floatformat:1 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <!-- Report Statistics by Type -->
+    <div class="chart-container">
+        <h3 class="chart-title"><i class="bi bi-pie-chart"></i> Reports by Incident Type</h3>
+        {% if reports_by_type %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Incident Type</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                    <th>Validation Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in reports_by_type %}
+                <tr>
+                    <td><strong>{{ stat.incident_type }}</strong></td>
+                    <td>{{ stat.count }}</td>
+                    <td>{% widthratio stat.count total_reports 100 %}%</td>
+                    <td>
+                        <div class="progress" style="width: 100px; display: inline-block; margin-right: 10px;">
+                            <div class="progress-bar" style="width: {% widthratio stat.validated_count stat.count 100 %}%"></div>
+                        </div>
+                        {% widthratio stat.validated_count stat.count 100 %}%
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+
+    <!-- Export Options -->
+    <div class="stats-actions">
+        <button class="btn-stat" onclick="alert('Export feature would be implemented here')">
+            <i class="bi bi-download"></i> Export to CSV
+        </button>
+        <button class="btn-stat" onclick="alert('PDF generation would be implemented here')">
+            <i class="bi bi-file-pdf"></i> Generate PDF Report
+        </button>
+        <button class="btn-stat" onclick="window.print()">
+            <i class="bi bi-printer"></i> Print Report
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extrajs %}
+<script>
+// Simple chart functionality (would be enhanced with Chart.js in production)
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Statistics dashboard loaded');
+    // Additional JavaScript for interactive charts would go here
+});
+</script>
+{% endblock %}

@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <!-- Header Section with Background -->
+    <div class="bg-primary text-white py-4">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold mb-2"><i class="bi bi-map"></i> Incident Map</h1>
+                    <p class="lead mb-0">Explore and monitor mangrove conservation efforts in real-time</p>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <a href="{% url 'report_create' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-plus-circle"></i> Report New Incident
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Controls Section -->
+    <div class="bg-light py-3 border-bottom">
+        <div class="container">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" placeholder="Search location..." id="search-location">
+                        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="incident-filter">
+                        <option value="">All Incident Types</option>
+                        <option value="cutting">Illegal Cutting</option>
+                        <option value="dumping">Pollution/Dumping</option>
+                        <option value="reclamation">Land Reclamation</option>
+                        <option value="other">Other Threats</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select" id="status-filter">
+                        <option value="">All Statuses</option>
+                        <option value="reported">Reported</option>
+                        <option value="validated">Validated</option>
+                        <option value="action_taken">Action Taken</option>
+                        <option value="resolved">Resolved</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-check form-switch pt-2">
+                        <input class="form-check-input" type="checkbox" id="satellite-toggle">
+                        <label class="form-check-label" for="satellite-toggle">Satellite View</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Map Container -->
+    <div class="container-fluid p-0">
+        <div id="map" class="map-container" style="height: 70vh;"></div>
+    </div>
+
+    <!-- Statistics and Legend Section -->
+    <div class="container py-4">
+        <div class="row">
+            <!-- Statistics Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="bi bi-graph-up"></i> Map Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-6 mb-3">
+                                <div class="display-6 fw-bold text-primary">{{ total_reports }}</div>
+                                <small class="text-muted">Total Reports</small>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <div class="display-6 fw-bold text-success">{{ active_reports }}</div>
+                                <small class="text-muted">Active</small>
+                            </div>
+                            <div class="col-6">
+                                <div class="display-6 fw-bold text-warning">{{ under_review }}</div>
+                                <small class="text-muted">Under Review</small>
+                            </div>
+                            <div class="col-6">
+                                <div class="display-6 fw-bold text-danger">{{ urgent_cases }}</div>
+                                <small class="text-muted">Urgent</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legend Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="bi bi-key"></i> Map Legend</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex flex-column gap-2">
+                            <div class="d-flex align-items-center">
+                                <div class="legend-marker bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div>
+                                    <strong>Validated Reports</strong>
+                                    <p class="text-muted mb-0 small">Confirmed incidents requiring action</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="legend-marker bg-warning me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div>
+                                    <strong>Under Review</strong>
+                                    <p class="text-muted mb-0 small">New reports being verified</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="legend-marker bg-info me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div>
+                                    <strong>Action Taken</strong>
+                                    <p class="text-muted mb-0 small">Authorities have responded</p>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="legend-marker bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div>
+                                    <strong>Urgent Cases</strong>
+                                    <p class="text-muted mb-0 small">Immediate attention required</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="col-lg-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'report_create' %}" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i> Report New Incident
+                            </a>
+                            <button class="btn btn-outline-primary" id="locate-me">
+                                <i class="bi bi-geo-alt"></i> Locate My Position
+                            </button>
+                            <button class="btn btn-outline-secondary" id="reset-view">
+                                <i class="bi bi-globe"></i> Reset Map View
+                            </button>
+                            <a href="{% url 'report_list' %}" class="btn btn-outline-info">
+                                <i class="bi bi-list-ul"></i> View All Reports
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize map centered on India
+        const map = L.map('map').setView([20.5937, 78.9629], 5);
+        
+        // Add base layers
+        const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        });
+        
+        const satelliteMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri',
+            maxZoom: 19
+        });
+        
+        streetMap.addTo(map);
+        
+        // Create layer for mangrove forests
+        const mangroveLayer = L.layerGroup().addTo(map);
+        
+        // **FETCH MANGROVE AREAS FROM YOUR API**
+        fetch('/api/mangrove-areas/')  // Make sure this matches your URL pattern
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Loaded mangrove areas:', data.mangrove_areas.length);
+                
+                data.mangrove_areas.forEach(function(area) {
+                    // Get color based on threat level
+                    let color = '#28a745'; // default green
+                    switch(area.threat_level) {
+                        case 'low': color = '#28a745'; break;      // Green
+                        case 'medium': color = '#ffc107'; break;   // Yellow  
+                        case 'high': color = '#fd7e14'; break;     // Orange
+                        case 'critical': color = '#dc3545'; break; // Red
+                    }
+                    
+                    // Calculate radius based on area size
+                    let radius = area.area_size ? Math.max(area.area_size / 100, 8) : 12;
+                    
+                    // Create mangrove forest marker
+                    const mangroveMarker = L.circleMarker([area.latitude, area.longitude], {
+                        color: color,
+                        fillColor: color,
+                        fillOpacity: 0.6,
+                        radius: radius,
+                        weight: 3
+                    }).bindPopup(`
+                        <div class="popup-content" style="max-width: 300px;">
+                            <h5 class="text-success">
+                                <i class="bi bi-tree-fill"></i> ${area.name}
+                            </h5>
+                            <p><strong>State:</strong> ${area.state}</p>
+                            <p><strong>Threat Level:</strong> 
+                                <span class="badge" style="background-color: ${color}; color: white;">
+                                    ${area.threat_level.toUpperCase()} RISK
+                                </span>
+                            </p>
+                            ${area.area_size ? `<p><strong>Area:</strong> ${area.area_size} km²</p>` : ''}
+                            <p>${area.description || 'Mangrove conservation area'}</p>
+                            <small class="text-muted">Added: ${area.created_at}</small>
+                        </div>
+                    `);
+                    
+                    mangroveLayer.addLayer(mangroveMarker);
+                });
+                
+                // Fit map to show all mangrove areas
+                if (mangroveLayer.getLayers().length > 0) {
+                    map.fitBounds(mangroveLayer.getBounds().pad(0.1));
+                }
+            })
+            .catch(error => {
+                console.error('Error loading mangrove areas:', error);
+                
+            });
+        
+        // Layer control
+        const baseMaps = {
+            "Street Map": streetMap,
+            "Satellite": satelliteMap
+        };
+        
+        const overlayMaps = {
+            "Mangrove Forests": mangroveLayer
+        };
+        
+        L.control.layers(baseMaps, overlayMaps, {position: 'topright'}).addTo(map);
+        
+        // Keep your existing controls (search, locate, etc.)...
+    });
+</script>
+
+
+<style>
+    .map-container {
+        border-top: 3px solid #2c7a5a;
+        border-bottom: 3px solid #2c7a5a;
+    }
+    
+    .marker-icon {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 14px;
+        border: 2px solid white;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    }
+    
+    .legend-marker {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+    
+    .custom-marker-success .marker-icon { background-color: #28a745; }
+    .custom-marker-warning .marker-icon { background-color: #ffc107; color: #000; }
+    .custom-marker-info .marker-icon { background-color: #17a2b8; }
+    .custom-marker-danger .marker-icon { background-color: #dc3545; }
+    .custom-marker-secondary .marker-icon { background-color: #6c757d; }
+    
+    .popup-content {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    .leaflet-popup-content-wrapper {
+        border-radius: 8px;
+    }
+    
+    .leaflet-popup-content {
+        margin: 15px;
+    }
+    
+    #search-location:focus {
+        border-color: #2c7a5a;
+        box-shadow: 0 0 0 0.2rem rgba(44, 122, 90, 0.25);
+    }
+</style>
+{% endblock %}

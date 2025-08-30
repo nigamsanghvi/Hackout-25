@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold text-primary mb-3">🏆 Community Leaderboard</h1>
+        <p class="lead text-muted">Celebrating our top contributors in mangrove conservation</p>
+    </div>
+
+    <!-- Time Period Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0">Top Contributors</h5>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-outline-primary active">All Time</button>
+                        <button type="button" class="btn btn-outline-primary">Monthly</button>
+                        <button type="button" class="btn btn-outline-primary">Weekly</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard -->
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Top 3 Winners -->
+            {% if top_users|length >= 3 %}
+            <div class="row mb-4">
+                <!-- Second Place -->
+                <div class="col-md-4">
+                    <div class="card text-center shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="position-relative mb-3">
+                                <div class="second-place-trophy bg-warning text-dark mx-auto mb-2">
+                                    <i class="bi bi-trophy-fill fs-2"></i>
+                                </div>
+                                <span class="position-absolute top-0 start-50 translate-middle badge bg-warning rounded-pill">#2</span>
+                            </div>
+                            <h5 class="card-title">{{ top_users.1.username }}</h5>
+                            <p class="text-muted mb-2">{{ top_users.1.get_user_type_display }}</p>
+                            <div class="display-6 fw-bold text-warning">{{ top_users.1.points }}</div>
+                            <small class="text-muted">points</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- First Place -->
+                <div class="col-md-4">
+                    <div class="card text-center shadow-lg h-100 border-warning">
+                        <div class="card-body">
+                            <div class="position-relative mb-3">
+                                <div class="first-place-trophy bg-warning text-white mx-auto mb-2">
+                                    <i class="bi bi-trophy-fill fs-1"></i>
+                                </div>
+                                <span class="position-absolute top-0 start-50 translate-middle badge bg-warning rounded-pill">#1</span>
+                            </div>
+                            <h5 class="card-title">{{ top_users.0.username }}</h5>
+                            <p class="text-muted mb-2">{{ top_users.0.get_user_type_display }}</p>
+                            <div class="display-6 fw-bold text-warning">{{ top_users.0.points }}</div>
+                            <small class="text-muted">points</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Third Place -->
+                <div class="col-md-4">
+                    <div class="card text-center shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="position-relative mb-3">
+                                <div class="third-place-trophy bg-warning text-dark mx-auto mb-2">
+                                    <i class="bi bi-trophy-fill fs-3"></i>
+                                </div>
+                                <span class="position-absolute top-0 start-50 translate-middle badge bg-warning rounded-pill">#3</span>
+                            </div>
+                            <h5 class="card-title">{{ top_users.2.username }}</h5>
+                            <p class="text-muted mb-2">{{ top_users.2.get_user_type_display }}</p>
+                            <div class="display-6 fw-bold text-warning">{{ top_users.2.points }}</div>
+                            <small class="text-muted">points</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Full Leaderboard List -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Complete Leaderboard</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        {% for user in top_users %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <span class="fw-bold me-3">#{{ forloop.counter }}</span>
+                                <div class="position-relative me-3">
+                                    {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" class="rounded-circle" width="45" height="45" alt="{{ user.username }}">
+                                    {% else %}
+                                    <div class="bg-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                                        <i class="bi bi-person text-white"></i>
+                                    </div>
+                                    {% endif %}
+                                    {% if forloop.counter <= 3 %}
+                                    <span class="position-absolute bottom-0 end-0 badge bg-warning rounded-pill p-1">
+                                        {{ forloop.counter }}
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <h6 class="mb-0">{{ user.username }}</h6>
+                                    <small class="text-muted">{{ user.get_user_type_display }}</small>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-primary rounded-pill fs-6">{{ user.points }}</span>
+                                <div><small class="text-muted">points</small></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- User Ranking -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Your Ranking</h5>
+                </div>
+                <div class="card-body text-center">
+                    {% if user.is_authenticated %}
+                    {% for u in top_users %}
+                    {% if u.id == user.id %}
+                    <div class="display-6 fw-bold text-primary">#{{ forloop.counter }}</div>
+                    <h5 class="text-success mb-2">{{ user.username }}</h5>
+                    <div class="display-4 fw-bold text-primary">{{ user.points }}</div>
+                    <p class="text-muted">points earned</p>
+                    {% endif %}
+                    {% endfor %}
+                    {% else %}
+                    <p class="text-muted">Sign in to see your ranking</p>
+                    <a href="{% url 'login' %}" class="btn btn-primary">Sign In</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- How to Earn Points -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">How to Earn Points</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-plus-circle text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">+10 points</h6>
+                            <small class="text-muted">Submit a report</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-check-circle text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">+20 points</h6>
+                            <small class="text-muted">Report gets validated</small>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px;">
+                            <i class="bi bi-award text-white"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-0">+5-50 points</h6>
+                            <small class="text-muted">Earn badges</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Rewards Info -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">Monthly Rewards</h5>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">Top contributors receive special rewards at the end of each month!</p>
+                    <ul class="list-unstyled">
+                        <li class="mb-2">🥇 <strong>1st Place:</strong> Conservation kit + Featured profile</li>
+                        <li class="mb-2">🥈 <strong>2nd Place:</strong> Premium account + Badge</li>
+                        <li class="mb-2">🥉 <strong>3rd Place:</strong> Exclusive badge + Points bonus</li>
+                        <li class="mb-0">🏅 <strong>Top 10:</strong> Special recognition</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .first-place-trophy {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .second-place-trophy {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .third-place-trophy {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    
+    .list-group-item {
+        padding: 1rem 1.25rem;
+        border-color: #f8f9fa;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .border-warning {
+        border-width: 2px !important;
+    }
+</style>
+{% endblock %}
