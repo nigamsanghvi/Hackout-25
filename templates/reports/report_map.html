@@ -4,15 +4,15 @@
 {% block content %}
 <div class="container-fluid px-0">
     <!-- Header Section with Background -->
-    <div class="bg-primary text-white py-4">
+    <div class="header-gradient py-4">
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-8">
-                    <h1 class="display-5 fw-bold mb-2"><i class="bi bi-map"></i> Incident Map</h1>
+                    <h1 class="display-5 fw-bold mb-2"><i class="bi bi-map"></i> Mangrove Watch Map</h1>
                     <p class="lead mb-0">Explore and monitor mangrove conservation efforts in real-time</p>
                 </div>
                 <div class="col-md-4 text-md-end">
-                    <a href="{% url 'report_create' %}" class="btn btn-light btn-lg">
+                    <a href="{% url 'report_create' %}" class="btn btn-light btn-lg shadow-sm">
                         <i class="bi bi-plus-circle"></i> Report New Incident
                     </a>
                 </div>
@@ -23,16 +23,18 @@
     <!-- Map Controls Section -->
     <div class="bg-light py-3 border-bottom">
         <div class="container">
-            <div class="row g-3">
+            <div class="row g-3 align-items-center">
                 <div class="col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text bg-white"><i class="bi bi-search"></i></span>
-                        <input type="text" class="form-control" placeholder="Search location..." id="search-location">
-                        <button class="btn btn-primary" type="button" id="search-button">Search</button>
+                    <div class="input-group shadow-sm">
+                        <span class="input-group-text bg-white border-end-0"><i class="bi bi-search text-muted"></i></span>
+                        <input type="text" class="form-control border-start-0" placeholder="Search location..." id="search-location">
+                        <button class="btn btn-primary" type="button" id="search-button">
+                            <i class="bi bi-geo-alt-fill"></i> Search
+                        </button>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" id="incident-filter">
+                    <select class="form-select shadow-sm" id="incident-filter">
                         <option value="">All Incident Types</option>
                         <option value="cutting">Illegal Cutting</option>
                         <option value="dumping">Pollution/Dumping</option>
@@ -41,7 +43,7 @@
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select" id="status-filter">
+                    <select class="form-select shadow-sm" id="status-filter">
                         <option value="">All Statuses</option>
                         <option value="reported">Reported</option>
                         <option value="validated">Validated</option>
@@ -50,9 +52,9 @@
                     </select>
                 </div>
                 <div class="col-md-2">
-                    <div class="form-check form-switch pt-2">
-                        <input class="form-check-input" type="checkbox" id="satellite-toggle">
-                        <label class="form-check-label" for="satellite-toggle">Satellite View</label>
+                    <div class="form-check form-switch pt-2 ps-0 d-flex justify-content-center">
+                        <input class="form-check-input me-2" type="checkbox" id="satellite-toggle">
+                        <label class="form-check-label fw-medium" for="satellite-toggle">Satellite View</label>
                     </div>
                 </div>
             </div>
@@ -69,8 +71,8 @@
         <div class="row">
             <!-- Statistics Card -->
             <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-info text-white">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-header bg-info text-white border-0 rounded-top">
                         <h5 class="mb-0"><i class="bi bi-graph-up"></i> Map Statistics</h5>
                     </div>
                     <div class="card-body">
@@ -92,41 +94,46 @@
                                 <small class="text-muted">Urgent</small>
                             </div>
                         </div>
+                        <div class="progress mt-4" style="height: 8px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ active_percentage }}%"></div>
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: {{ review_percentage }}%"></div>
+                            <div class="progress-bar bg-danger" role="progressbar" style="width: {{ urgent_percentage }}%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Legend Card -->
             <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-success text-white">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-header bg-success text-white border-0 rounded-top">
                         <h5 class="mb-0"><i class="bi bi-key"></i> Map Legend</h5>
                     </div>
                     <div class="card-body">
-                        <div class="d-flex flex-column gap-2">
+                        <div class="d-flex flex-column gap-3">
                             <div class="d-flex align-items-center">
-                                <div class="legend-marker bg-success me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div class="legend-marker bg-success me-3"></div>
                                 <div>
                                     <strong>Validated Reports</strong>
                                     <p class="text-muted mb-0 small">Confirmed incidents requiring action</p>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
-                                <div class="legend-marker bg-warning me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div class="legend-marker bg-warning me-3"></div>
                                 <div>
                                     <strong>Under Review</strong>
                                     <p class="text-muted mb-0 small">New reports being verified</p>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
-                                <div class="legend-marker bg-info me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div class="legend-marker bg-info me-3"></div>
                                 <div>
                                     <strong>Action Taken</strong>
                                     <p class="text-muted mb-0 small">Authorities have responded</p>
                                 </div>
                             </div>
                             <div class="d-flex align-items-center">
-                                <div class="legend-marker bg-danger me-3" style="width: 20px; height: 20px; border-radius: 50%;"></div>
+                                <div class="legend-marker bg-danger me-3"></div>
                                 <div>
                                     <strong>Urgent Cases</strong>
                                     <p class="text-muted mb-0 small">Immediate attention required</p>
@@ -139,8 +146,8 @@
 
             <!-- Quick Actions Card -->
             <div class="col-lg-4 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-header bg-primary text-white">
+                <div class="card shadow-sm h-100 border-0">
+                    <div class="card-header bg-primary text-white border-0 rounded-top">
                         <h5 class="mb-0"><i class="bi bi-lightning"></i> Quick Actions</h5>
                     </div>
                     <div class="card-body">
@@ -185,6 +192,100 @@
         
         // Create layer for mangrove forests
         const mangroveLayer = L.layerGroup().addTo(map);
+        
+        // Create layer for incidents
+        const incidentLayer = L.layerGroup().addTo(map);
+        
+        // Store all markers for filtering
+        let allIncidentMarkers = [];
+        
+        // **FETCH INCIDENT REPORTS FROM YOUR API**
+        fetch('/api/incident-reports/')  // Make sure this matches your URL pattern
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Loaded incident reports:', data.incidents.length);
+                
+                data.incidents.forEach(function(incident) {
+                    // Get color based on status
+                    let color, iconClass;
+                    switch(incident.status) {
+                        case 'validated': 
+                            color = '#28a745'; 
+                            iconClass = 'bi-check-circle-fill';
+                            break;
+                        case 'reported': 
+                            color = '#ffc107'; 
+                            iconClass = 'bi-exclamation-circle-fill';
+                            break;
+                        case 'action_taken': 
+                            color = '#17a2b8'; 
+                            iconClass = 'bi-gear-fill';
+                            break;
+                        case 'resolved': 
+                            color = '#6c757d'; 
+                            iconClass = 'bi-check-lg';
+                            break;
+                        default: 
+                            color = '#6c757d'; 
+                            iconClass = 'bi-question-circle-fill';
+                    }
+                    
+                    // Create custom icon
+                    const iconHtml = `<div class="marker-icon" style="background-color: ${color};">
+                                        <i class="bi ${iconClass}"></i>
+                                      </div>`;
+                    
+                    const incidentIcon = L.divIcon({
+                        html: iconHtml,
+                        className: 'custom-marker',
+                        iconSize: [30, 30],
+                        iconAnchor: [15, 15]
+                    });
+                    
+                    // Create incident marker
+                    const incidentMarker = L.marker([incident.latitude, incident.longitude], { 
+                        icon: incidentIcon 
+                    }).bindPopup(`
+                        <div class="popup-content" style="max-width: 300px;">
+                            <h5 class="border-bottom pb-2">
+                                <i class="bi ${iconClass} me-2" style="color: ${color};"></i> 
+                                ${incident.title}
+                            </h5>
+                            <p><strong>Type:</strong> ${incident.incident_type}</p>
+                            <p><strong>Status:</strong> 
+                                <span class="badge" style="background-color: ${color}; color: white;">
+                                    ${incident.status.replace('_', ' ').toUpperCase()}
+                                </span>
+                            </p>
+                            <p><strong>Reported:</strong> ${new Date(incident.created_at).toLocaleDateString()}</p>
+                            <p class="mb-2">${incident.description.substring(0, 100)}...</p>
+                            <div class="text-end">
+                                <a href="/reports/${incident.id}" class="btn btn-sm btn-outline-primary">View Details</a>
+                            </div>
+                        </div>
+                    `);
+                    
+                    // Store incident data for filtering
+                    incidentMarker.incidentData = incident;
+                    allIncidentMarkers.push(incidentMarker);
+                    incidentLayer.addLayer(incidentMarker);
+                });
+                
+                // Fit map to show all incidents
+                if (incidentLayer.getLayers().length > 0) {
+                    map.fitBounds(incidentLayer.getBounds().pad(0.1));
+                }
+            })
+            .catch(error => {
+                console.error('Error loading incident reports:', error);
+                // Add sample data for demonstration if API fails
+                addSampleIncidents();
+            });
         
         // **FETCH MANGROVE AREAS FROM YOUR API**
         fetch('/api/mangrove-areas/')  // Make sure this matches your URL pattern
@@ -236,15 +337,9 @@
                     
                     mangroveLayer.addLayer(mangroveMarker);
                 });
-                
-                // Fit map to show all mangrove areas
-                if (mangroveLayer.getLayers().length > 0) {
-                    map.fitBounds(mangroveLayer.getBounds().pad(0.1));
-                }
             })
             .catch(error => {
                 console.error('Error loading mangrove areas:', error);
-                
             });
         
         // Layer control
@@ -254,17 +349,201 @@
         };
         
         const overlayMaps = {
-            "Mangrove Forests": mangroveLayer
+            "Mangrove Forests": mangroveLayer,
+            "Incident Reports": incidentLayer
         };
         
         L.control.layers(baseMaps, overlayMaps, {position: 'topright'}).addTo(map);
         
-        // Keep your existing controls (search, locate, etc.)...
+        // Search functionality
+        document.getElementById('search-button').addEventListener('click', function() {
+            const query = document.getElementById('search-location').value;
+            if (query) {
+                // Use Nominatim for geocoding
+                fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            const result = data[0];
+                            map.setView([result.lat, result.lon], 12);
+                            
+                            // Add a marker for the search result
+                            L.marker([result.lat, result.lon])
+                                .addTo(map)
+                                .bindPopup(`<b>Search Result:</b> ${result.display_name}`)
+                                .openPopup();
+                        } else {
+                            alert('Location not found. Please try a different search term.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error during geocoding:', error);
+                        alert('Search service is temporarily unavailable.');
+                    });
+            }
+        });
+        
+        // Filter functionality
+        document.getElementById('incident-filter').addEventListener('change', applyFilters);
+        document.getElementById('status-filter').addEventListener('change', applyFilters);
+        
+        function applyFilters() {
+            const incidentType = document.getElementById('incident-filter').value;
+            const statusType = document.getElementById('status-filter').value;
+            
+            incidentLayer.clearLayers();
+            
+            allIncidentMarkers.forEach(marker => {
+                let show = true;
+                
+                if (incidentType && marker.incidentData.incident_type !== incidentType) {
+                    show = false;
+                }
+                
+                if (statusType && marker.incidentData.status !== statusType) {
+                    show = false;
+                }
+                
+                if (show) {
+                    incidentLayer.addLayer(marker);
+                }
+            });
+            
+            if (incidentLayer.getLayers().length > 0) {
+                map.fitBounds(incidentLayer.getBounds().pad(0.1));
+            }
+        }
+        
+        // Satellite view toggle
+        document.getElementById('satellite-toggle').addEventListener('change', function() {
+            if (this.checked) {
+                map.removeLayer(streetMap);
+                satelliteMap.addTo(map);
+            } else {
+                map.removeLayer(satelliteMap);
+                streetMap.addTo(map);
+            }
+        });
+        
+        // Locate me button
+        document.getElementById('locate-me').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        map.setView([position.coords.latitude, position.coords.longitude], 13);
+                        L.marker([position.coords.latitude, position.coords.longitude])
+                            .addTo(map)
+                            .bindPopup('<b>Your Location</b>')
+                            .openPopup();
+                    },
+                    function(error) {
+                        alert('Unable to retrieve your location. Please check your browser permissions.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        });
+        
+        // Reset view button
+        document.getElementById('reset-view').addEventListener('click', function() {
+            map.setView([20.5937, 78.9629], 5);
+            document.getElementById('incident-filter').value = '';
+            document.getElementById('status-filter').value = '';
+            applyFilters();
+        });
+        
+        // Add sample incidents if API fails
+        function addSampleIncidents() {
+            const sampleIncidents = [
+                {
+                    id: 1,
+                    title: "Illegal Logging Detected",
+                    incident_type: "cutting",
+                    status: "validated",
+                    latitude: 19.0760,
+                    longitude: 72.8777,
+                    description: "Local residents reported unauthorized tree cutting in the mangrove area.",
+                    created_at: "2023-10-15T08:30:00Z"
+                },
+                {
+                    id: 2,
+                    title: "Industrial Waste Dumping",
+                    incident_type: "dumping",
+                    status: "reported",
+                    latitude: 22.5726,
+                    longitude: 88.3639,
+                    description: "Suspected chemical waste being dumped near mangrove forest.",
+                    created_at: "2023-10-20T14:45:00Z"
+                }
+            ];
+            
+            sampleIncidents.forEach(function(incident) {
+                // Get color based on status
+                let color, iconClass;
+                switch(incident.status) {
+                    case 'validated': 
+                        color = '#28a745'; 
+                        iconClass = 'bi-check-circle-fill';
+                        break;
+                    case 'reported': 
+                        color = '#ffc107'; 
+                        iconClass = 'bi-exclamation-circle-fill';
+                        break;
+                    default: 
+                        color = '#6c757d'; 
+                        iconClass = 'bi-question-circle-fill';
+                }
+                
+                // Create custom icon
+                const iconHtml = `<div class="marker-icon" style="background-color: ${color};">
+                                    <i class="bi ${iconClass}"></i>
+                                  </div>`;
+                
+                const incidentIcon = L.divIcon({
+                    html: iconHtml,
+                    className: 'custom-marker',
+                    iconSize: [30, 30],
+                    iconAnchor: [15, 15]
+                });
+                
+                // Create incident marker
+                const incidentMarker = L.marker([incident.latitude, incident.longitude], { 
+                    icon: incidentIcon 
+                }).bindPopup(`
+                    <div class="popup-content" style="max-width: 300px;">
+                        <h5 class="border-bottom pb-2">
+                            <i class="bi ${iconClass} me-2" style="color: ${color};"></i> 
+                            ${incident.title}
+                        </h5>
+                        <p><strong>Type:</strong> ${incident.incident_type}</p>
+                        <p><strong>Status:</strong> 
+                            <span class="badge" style="background-color: ${color}; color: white;">
+                                ${incident.status.replace('_', ' ').toUpperCase()}
+                            </span>
+                        </p>
+                        <p><strong>Reported:</strong> ${new Date(incident.created_at).toLocaleDateString()}</p>
+                        <p class="mb-2">${incident.description.substring(0, 100)}...</p>
+                        <div class="text-end">
+                            <a href="/reports/${incident.id}" class="btn btn-sm btn-outline-primary">View Details</a>
+                        </div>
+                    </div>
+                `);
+                
+                // Store incident data for filtering
+                incidentMarker.incidentData = incident;
+                allIncidentMarkers.push(incidentMarker);
+                incidentLayer.addLayer(incidentMarker);
+            });
+        }
     });
 </script>
 
-
 <style>
+    .header-gradient {
+        background: linear-gradient(135deg, #2c7a5a 0%, #1e5e3e 100%);
+    }
+    
     .map-container {
         border-top: 3px solid #2c7a5a;
         border-bottom: 3px solid #2c7a5a;
@@ -312,6 +591,40 @@
     #search-location:focus {
         border-color: #2c7a5a;
         box-shadow: 0 0 0 0.2rem rgba(44, 122, 90, 0.25);
+    }
+    
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .form-select:focus, .form-control:focus {
+        border-color: #2c7a5a;
+        box-shadow: 0 0 0 0.2rem rgba(44, 122, 90, 0.25);
+    }
+    
+    .btn-primary {
+        background-color: #2c7a5a;
+        border-color: #2c7a5a;
+    }
+    
+    .btn-primary:hover {
+        background-color: #1e5e3e;
+        border-color: #1e5e3e;
+    }
+    
+    .btn-outline-primary {
+        color: #2c7a5a;
+        border-color: #2c7a5a;
+    }
+    
+    .btn-outline-primary:hover {
+        background-color: #2c7a5a;
+        border-color: #2c7a5a;
+        color: white;
     }
 </style>
 {% endblock %}
