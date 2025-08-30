@@ -1,46 +1,34 @@
-🌱 Community Mangrove Watch
+# 🌱 Community Mangrove Watch
 
 A Django web app to report and track threats to mangrove forests.
 
-🚀 How to Run
+## 🚀 How to Run
 
-Download and extract the project
+- Download and extract the project  
+- Create a virtual environment:  
+  `python -m venv venv`  
+- Activate it:  
+  - Windows: `venv\Scripts\activate`  
+  - Mac/Linux: `source venv/bin/activate`  
+- Install packages:  
+  `pip install -r requirements.txt`  
+- Run database setup:  
+  `python manage.py migrate`  
+- Create an admin:  
+  `python manage.py createsuperuser`  
+- Start the server:  
+  `python manage.py runserver`  
+- Open in browser: **http://localhost:8000**
 
-Create a virtual environment:
+## 🌍 Features
 
-python -m venv venv
+- Easy signup/login  
+- Report incidents with location  
+- Map view with reports  
+- Points & badges for users  
+- Dashboard for users & admins  
+- Works on mobile & desktop  
 
-Activate it:
+## 🔑 Admin
 
-Windows: venv\Scripts\activate
-
-Mac/Linux: source venv/bin/activate
-
-Install packages: pip install -r requirements.txt
-
-Run database setup: python manage.py migrate
-
-Create an admin: python manage.py createsuperuser
-
-Start the server: python manage.py runserver
-
-Open http://localhost:8000
- in your browser
-
-🌍 Features
-
-Easy signup/login
-
-Report incidents with location
-
-Map view with reports
-
-Points & badges for users
-
-Dashboard for users & admins
-
-Works on mobile & desktop
-
-🔑 Admin
-
-Go to /admin to manage users, reports, and badges.
+Go to `/admin` to manage users, reports, and badges.
