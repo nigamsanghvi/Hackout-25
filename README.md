@@ -2,6 +2,10 @@
 
 A Django web app to report and track threats to mangrove forests.
 
+<img width="1895" height="1079" alt="Screenshot 2026-03-14 164003" src="https://github.com/user-attachments/assets/4a7a1c21-52ad-4321-8b6c-5a1b290b32f2" />
+
+
+
 ## 🚀 How to Run
 
 - Download and extract the project  
@@ -19,6 +23,7 @@ A Django web app to report and track threats to mangrove forests.
 - Start the server:  
   `python manage.py runserver`  
 - Open in browser: **http://localhost:8000**
+
 
 ## 🌍 Features
 
